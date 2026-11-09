@@ -16,8 +16,9 @@
     'reverse-scent': {paper:'#dfe8e9', ink:'#2f4143', muted:'#70888b', accent:'#527b80', tint:'#c5d8da', line:'#a7bec0'},
     'dunhuang':      {paper:'#f4e9d6', ink:'#403323', muted:'#958064', accent:'#b27a3e', tint:'#e9d7b8', line:'#d5be9b'},
     'veo':           {paper:'#141619', ink:'#f2f1ed', muted:'#a9aeb3', accent:'#b9c4cb', tint:'#292d32', line:'#494e55'},
-    'dragon-guardian':{paper:'#dde9df', ink:'#293d31', muted:'#738875', accent:'#4d785d', tint:'#c5dbc9', line:'#a9c4b0'},
-    'fluffy-knight': {paper:'#e1edf0', ink:'#2e4248', muted:'#7a9098', accent:'#547f91', tint:'#cbdfe5', line:'#aac5d0'},
+    'dragon-guardian':{paper:'#102f25', ink:'#f2f4de', muted:'#bdcfb5', accent:'#d6be84', tint:'#22493a', line:'#51745e'},
+    'fluffy-knight': {paper:'#102e50', ink:'#edf6ff', muted:'#b4cce2', accent:'#7fd5f0', tint:'#20486b', line:'#4b7295'},
+    'xiaocha':       {paper:'#850911', ink:'#fff1dc', muted:'#ecc2b0', accent:'#edbc78', tint:'#a00c13', line:'#c34736'},
     'sakura':        {paper:'#f6d3e2', ink:'#542d41', muted:'#8d526e', accent:'#ad477a', tint:'#edb7ce', line:'#d491b0'}
   };
   let selected = room.querySelector('[data-festival-select][aria-pressed="true"]').dataset.festivalSelect;
@@ -48,7 +49,7 @@
   }
   function applyTheme(item) {
     Object.entries(themes[item.id]).forEach(([key,value]) => room.style.setProperty(`--festival-${key}`, value));
-    const dark = item.id === 'ter-traditum' || item.id === 'veo';
+    const dark = ['ter-traditum','veo','xiaocha','dragon-guardian','fluffy-knight'].includes(item.id);
     room.dataset.colorScheme = dark ? 'dark' : 'light';
     room.style.setProperty('--festival-on-accent', dark ? themes[item.id].paper : '#fff');
     room.dataset.activeProject = item.id;

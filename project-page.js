@@ -37,6 +37,22 @@
     }
     return media;
   }
+  function measureAssetWorkspace(library) {
+    const navigation = document.querySelector('.project-sections');
+    const tabs = library.querySelector('.asset-category-tabs');
+    const top = Math.ceil((navigation ? navigation.getBoundingClientRect().bottom : 0) + 12);
+    const tabHeight = tabs.offsetHeight + parseFloat(getComputedStyle(tabs).marginBottom);
+    library.style.setProperty('--asset-toolbar-offset', `${top}px`);
+    library.style.setProperty('--asset-tabs-height', `${tabHeight}px`);
+    return top;
+  }
+  function revealAssetWorkspace(library) {
+    const top = measureAssetWorkspace(library);
+    const bounds = library.getBoundingClientRect();
+    if (bounds.top < top - 1 || bounds.bottom > window.innerHeight - 12) {
+      window.scrollTo({top:window.scrollY + bounds.top - top, behavior:'instant'});
+    }
+  }
   function bindGallery(gallery, items) {
     const stage = gallery.querySelector('.asset-stage');
     const caption = gallery.querySelector('[data-asset-caption]');
@@ -97,6 +113,7 @@
       previous.replaceWith(createAssetMedia(items[index]));
       caption.textContent = button.dataset.assetTitle;
       count.textContent = `${String(index + 1).padStart(2, '0')} / ${String(thumbnails.length).padStart(2, '0')}`;
+      revealAssetWorkspace(gallery.closest('[data-asset-library]'));
       thumbnails.forEach(item => {
         const selected = item === button;
         item.classList.toggle('is-selected', selected);
@@ -182,7 +199,7 @@
       bindGallery(gallery, items);
     };
     tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => render(tab));
+      tab.addEventListener('click', () => { render(tab); revealAssetWorkspace(library); });
       tab.addEventListener('keydown', event => {
         let next;
         if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
@@ -195,6 +212,9 @@
         tabs[next].focus({preventScroll:true});
       });
     });
+    measureAssetWorkspace(library);
+    window.addEventListener('resize', () => measureAssetWorkspace(library));
+    document.fonts.ready.then(() => measureAssetWorkspace(library));
     render(tabs.find(tab => tab.dataset.assetCategory === 'characters') || tabs[0]);
   });
   // Stop all project media when leaving, including browser back navigation.
