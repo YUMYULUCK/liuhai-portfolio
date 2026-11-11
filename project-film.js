@@ -3,22 +3,30 @@
   const button=document.querySelector('.dunhuang-play');
   const error=document.querySelector('.film-error');
   if(!video || !button)return;
-  const stream=video.dataset.stream;
-  let hls=null,starting=false,prepared=false,requested=false,recoveries=0;
   const label=button.querySelector('.dunhuang-play-text');
-  const failed=()=>{
+  const quality=document.createElement('label');
+  quality.className='film-quality';
+  quality.innerHTML='<span>清晰度</span><select aria-label="视频清晰度"><option value="hd">高清</option><option value="smooth">流畅</option></select>';
+  document.querySelector('.project-screen-caption').append(quality);
+  const picker=quality.querySelector('select');
+  const nativeHls=Boolean(video.canPlayType('application/vnd.apple.mpegurl'));
+  let hls=null,prepared=false,requested=false,starting=false,recoveries=0,revision=0;
+  let pendingRestore=null;
+  function failed(){
     if(error)error.hidden=false;
     button.hidden=false;
     label.textContent='重新播放';
-  };
+  }
   function prepare(){
     if(prepared)return;
     prepared=true;
-    // Read manifests near the player, but leave video segments until playback.
-    if(video.canPlayType('application/vnd.apple.mpegurl')){
+    // Each option points to one rendition; bandwidth never silently lowers quality.
+    const stream=picker.value==='smooth' ? video.dataset.smoothStream : video.dataset.stream;
+    video.dataset.quality=picker.value;
+    if(nativeHls){
       video.src=stream;
     }else if(window.Hls && Hls.isSupported()){
-      hls=new Hls({autoStartLoad:false,startLevel:0,capLevelToPlayerSize:true,
+      hls=new Hls({autoStartLoad:false,capLevelToPlayerSize:false,
         maxBufferLength:12,maxMaxBufferLength:24,backBufferLength:12,enableWorker:true});
       hls.on(Hls.Events.ERROR,(_event,data)=>{
         if(!data.fatal)return;
@@ -38,6 +46,51 @@
     requested=true;
     if(hls)hls.startLoad();
   }
+  async function play(){
+    if(starting)return;
+    const token=revision;
+    starting=true;
+    recoveries=0;
+    if(error)error.hidden=true;
+    startLoading(true);
+    label.textContent='正在缓冲…';
+    try{
+      await video.play();
+      if(token===revision){button.hidden=true;video.focus({preventScroll:true});}
+    }catch{
+      if(token===revision){button.hidden=false;label.textContent='重新播放';}
+    }finally{if(token===revision)starting=false;}
+  }
+  picker.addEventListener('change',()=>{
+    const position=pendingRestore?.position ?? video.currentTime;
+    const resume=pendingRestore?.resume ?? (!video.paused || starting);
+    const hadRequested=requested;
+    revision++;
+    starting=false;
+    pendingRestore={position,resume};
+    video.pause();
+    if(hls){hls.destroy();hls=null;}
+    video.removeAttribute('src');
+    video.load();
+    prepared=false;
+    requested=false;
+    recoveries=0;
+    if(error)error.hidden=true;
+    prepare();
+    button.hidden=false;
+    label.textContent=resume ? '正在切换…' : '播放正片';
+    if(hadRequested || resume || position>0){
+      startLoading();
+      if(nativeHls)video.load();
+    }
+  });
+  video.addEventListener('loadedmetadata',()=>{
+    if(!pendingRestore)return;
+    const state=pendingRestore;
+    pendingRestore=null;
+    if(state.position>0)video.currentTime=Math.min(state.position,Math.max(0,video.duration-.1));
+    if(state.resume)void play();
+  });
   if('IntersectionObserver' in window){
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)){prepare();observer.disconnect();}
@@ -45,19 +98,9 @@
     observer.observe(video);
   }
   button.hidden=false;
-  button.addEventListener('click',async()=>{
-    if(starting)return;
-    starting=true;
-    recoveries=0;
-    if(error)error.hidden=true;
-    startLoading(true);
-    label.textContent='正在缓冲…';
-    try{await video.play();button.hidden=true;video.focus({preventScroll:true});}
-    catch{button.hidden=false;button.querySelector('.dunhuang-play-text').textContent='重新播放';}
-    finally{starting=false;}
-  });
+  button.addEventListener('click',()=>void play());
   video.addEventListener('play',()=>{startLoading();button.hidden=true;if(error)error.hidden=true;});
-  video.addEventListener('ended',()=>{button.querySelector('.dunhuang-play-text').textContent='再看一遍';button.hidden=false;});
+  video.addEventListener('ended',()=>{label.textContent='再看一遍';button.hidden=false;});
   video.addEventListener('error',failed);
   window.addEventListener('pagehide',()=>{video.pause();if(hls)hls.stopLoad();});
   window.addEventListener('pageshow',event=>{if(event.persisted && requested && hls)hls.startLoad();});

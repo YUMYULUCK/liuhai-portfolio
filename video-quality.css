@@ -1,0 +1,5 @@
+.project-screen-caption{align-items:center;flex-wrap:wrap}
+.film-quality{display:inline-flex;align-items:center;gap:8px;margin-left:auto;font-size:12px;letter-spacing:0;line-height:1.5;color:var(--theme-ink,var(--ink,#eee))}
+.film-quality select{font:inherit;color:inherit;background:var(--theme-base,var(--bg,#181818));border:1px solid var(--theme-line,#888);border-radius:6px;min-height:34px;padding:4px 24px 4px 10px;cursor:pointer}
+.film-quality select:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+@media(max-width:600px){.film-quality{font-size:12px;gap:6px}.project-screen-caption .dunhuang-watch-note{display:none}}
