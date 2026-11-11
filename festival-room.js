@@ -21,7 +21,20 @@
     'xiaocha':       {paper:'#850911', ink:'#fff1dc', muted:'#ecc2b0', accent:'#edbc78', tint:'#a00c13', line:'#c34736'},
     'sakura':        {paper:'#f6d3e2', ink:'#542d41', muted:'#8d526e', accent:'#ad477a', tint:'#edb7ce', line:'#d491b0'}
   };
-  let selected = room.querySelector('[data-festival-select][aria-pressed="true"]').dataset.festivalSelect;
+  const defaultProject = projects.find(item => item.id === 'ter-traditum') || projects[0];
+  const selectionKey = 'festival-selected-project';
+  let initialProject = defaultProject;
+  // Restore a project-page return, while an explicit reload starts at the default.
+  try {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    const referrer = document.referrer ? new URL(document.referrer) : null;
+    const returningFromProject = referrer?.origin === location.origin &&
+      /\/projects\/[^/]+\.html$/.test(referrer.pathname);
+    if (navigation?.type !== 'reload' && (returningFromProject || navigation?.type === 'back_forward')) {
+      initialProject = projects.find(item => item.id === sessionStorage.getItem(selectionKey)) || defaultProject;
+    }
+  } catch {}
+  let selected = initialProject.id;
   let filtered = projects;
   let requestId = 0;
   let running = [];
@@ -87,6 +100,7 @@
     const outgoing = withMotion && previousImage ? previousImage.cloneNode() : null;
     feature.innerHTML = `<a class="f-screen" href="${escape(item.href)}" aria-label="进入${escape(item.title)}项目"><span class="f-screen-label">FEATURED FILM / ${item.number}</span><img src="${escape(item.image)}" alt="${escape(item.title)}作品封面" width="1672" height="941"><div class="f-screen-bottom"><span>${escape(item.label)} · ${item.duration}</span><span class="festival-open" aria-hidden="true">↗</span></div></a><div class="f-caption"><div><span class="festival-eyebrow">YUMYULUCK ORIGINAL / ${item.number}</span><h3>${escape(item.title)}</h3><p>${escape(item.description)}</p></div><a class="f-enter" href="${escape(item.href)}">进入作品<b aria-hidden="true">↗</b></a></div>`;
     selected = item.id;
+    try { sessionStorage.setItem(selectionKey, selected); } catch {}
     // Image, title and the section palette change together, in this same frame.
     applyTheme(item);
     updateSelection(item.id);
@@ -182,7 +196,7 @@
     buttons[next].scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
   });
   reducedMotion.addEventListener('change', () => {if (reducedMotion.matches) stopMotion()});
-  applyTheme(projects.find(item => item.id === selected));
+  commit(initialProject, false);
   alignMarkers();
   room.classList.add('has-festival-motion');
   requestAnimationFrame(() => {room.dataset.motionReady='true'});
