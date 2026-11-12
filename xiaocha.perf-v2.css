@@ -1,0 +1,14 @@
+.project-showcase[data-project="xiaocha"]{--theme-art:url('assets/xiaocha/background.lossless-v2.webp');--theme-base:#7b070e;--theme-ink:#fff1dc;--theme-muted:#ecc2b0;--theme-accent:#edbc78;--theme-line:#c3473680;--theme-header:#7b070ef2;--theme-sheet-start:#a00c13ee;--theme-sheet-end:#7b070ee8;--theme-sheet-border:#c3473666;--theme-shadow:#00000033;--theme-empty:#a00c1380}
+.project.project-xiaocha{--project-cover:none;--project-base:#7b070e;--glass-top:transparent;--glass-middle:transparent;--glass-bottom:transparent;background:#7b070e;color:#fff1dc;--accent:#edbc78;--muted:#ecc2b0;--line:#c34736}
+.project.dragon{--project-cover:none;--project-base:#102f25;--glass-top:transparent;--glass-middle:transparent;--glass-bottom:transparent;background:#102f25;color:#f2f4de;--accent:#d6be84;--muted:#bdcfb5;--line:#51745e}
+.project.project-fluffy-knight{--project-cover:none;--project-base:#102e50;--glass-top:transparent;--glass-middle:transparent;--glass-bottom:transparent;background:#102e50;color:#edf6ff;--accent:#7fd5f0;--muted:#b4cce2;--line:#4b7295}
+
+html:has(body[data-project="xiaocha"]) {background:#7b070e;color-scheme:dark}
+
+/* Keep the full silhouettes of portrait prop references in the thumbnail strip. */
+[data-project="xiaocha"] #asset-category-panel[aria-labelledby="asset-tab-objects"] .asset-thumb img{object-fit:contain;background:color-mix(in srgb,var(--theme-ink) 6%,transparent)}
+
+[data-project="xiaocha"] .notebook-nav{align-self:start}
+@media(max-width:760px){[data-project="xiaocha"] .notebook-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+[data-project="xiaocha"] .notebook-storyboard-grid img{aspect-ratio:16/9;object-fit:contain;background:transparent}
