@@ -79,7 +79,7 @@
     startLoading(true);
     label.textContent='正在缓冲…';
     try{
-      await waitForStartBuffer(token);
+      if(hls)await waitForStartBuffer(token);
       if(token!==revision)return;
       await video.play();
       if(token===revision){button.hidden=true;video.focus({preventScroll:true});}
