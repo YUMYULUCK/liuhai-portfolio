@@ -1,0 +1,21 @@
+/* A blurred copy of each cover sits behind the original, sharp artwork. */
+.project{position:relative;isolation:isolate;overflow:hidden;--glass-top:rgba(12,16,18,.70);--glass-middle:rgba(12,16,18,.43);--glass-bottom:rgba(12,16,18,.74);background:var(--project-base,#1b1915)}
+.project::before{content:"";position:absolute;inset:-64px;z-index:-2;pointer-events:none;background:var(--project-cover) center center/cover no-repeat;filter:blur(38px) saturate(.84)}
+.project::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,var(--glass-top),var(--glass-middle) 45%,var(--glass-bottom))}
+.project.roman{--project-cover:url('assets/01-ter-traditum-v2.lossless-v2.webp');--project-base:#252c2e;--accent:#dfc69d}
+.project.dunhuang{--project-cover:url('assets/02-dunhuang.lossless-v2.webp');--project-base:#eee6d8;--glass-top:rgba(248,243,231,.86);--glass-middle:rgba(248,243,231,.64);--glass-bottom:rgba(248,243,231,.89);--accent:#74502c}
+.project.dragon{--project-cover:url('assets/03-dragon-guardian.lossless-v2.webp');--project-base:#172620;--glass-top:rgba(8,19,16,.70);--glass-middle:rgba(8,19,16,.42);--glass-bottom:rgba(8,19,16,.75);--accent:#dfc49a}
+.project.hades{--project-cover:url('assets/04-golden-wish.lossless-v2.webp');--project-base:#2a2031;--glass-top:rgba(24,15,32,.72);--glass-middle:rgba(24,15,32,.46);--glass-bottom:rgba(24,15,32,.77);--accent:#e4cce5}
+.project.sakura{--project-cover:url('assets/05-sakura.jpg');--project-base:#f2e5e5;--glass-top:rgba(252,240,242,.88);--glass-middle:rgba(252,240,242,.71);--glass-bottom:rgba(252,240,242,.91);--accent:#8e354f}
+.project .artwork{box-shadow:0 20px 56px rgba(5,10,14,.20)}
+.project .project-bottom>p{opacity:.86}
+@media(max-width:640px){.project::before{inset:-44px;filter:blur(28px) saturate(.84)}.project .artwork{box-shadow:0 12px 32px rgba(5,10,14,.17)}}
+
+.project.project-reverse-scent{--project-cover:url('assets/reverse-scent/visuals/incense-background.lossless-v2.webp');--project-base:#292722;--accent:#dfc69d;color:#f5eee0}
+.project.project-fluffy-knight{--project-cover:url('assets/fluffy-knight/visuals/ivory-blue-background.lossless-v2.webp');--project-base:#223329;--accent:#dfc69d;color:#f5eee0}
+.project.project-veo{--project-cover:url('assets/veo-cover.lossless-v2.webp');--project-base:#eee6d8;--glass-top:rgba(248,243,231,.86);--glass-middle:rgba(248,243,231,.64);--glass-bottom:rgba(248,243,231,.89);--accent:#74502c;color:#322b20}
+
+.project.roman{--project-base:#420f1c;--glass-top:rgba(71,12,24,.88);--glass-middle:rgba(71,12,24,.65);--glass-bottom:rgba(52,7,16,.93);--accent:#d9b684;color:#fff3e2}
+
+/* Delay offscreen backgrounds without changing their appearance in view. */
+.project[data-lazy-backdrop]::before{background-image:none}
