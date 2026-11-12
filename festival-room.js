@@ -21,7 +21,7 @@
     'xiaocha':       {paper:'#850911', ink:'#fff1dc', muted:'#ecc2b0', accent:'#edbc78', tint:'#a00c13', line:'#c34736'},
     'sakura':        {paper:'#f6d3e2', ink:'#542d41', muted:'#8d526e', accent:'#ad477a', tint:'#edb7ce', line:'#d491b0'}
   };
-  const defaultProject = projects.find(item => item.id === 'ter-traditum') || projects[0];
+  const defaultProject = projects.find(item => item.id === 'xiaocha') || projects[0];
   const selectionKey = 'festival-selected-project';
   let initialProject = defaultProject;
   // Restore a project-page return, while an explicit reload starts at the default.
@@ -164,6 +164,10 @@
       const category = button.dataset.festivalFilter;
       requestId++;
       filtered = category === 'all' ? projects : projects.filter(item => item.category === category);
+      if (category === 'real') {
+        const order = ['golden-wish', 'reverse-scent', 'ter-traditum'];
+        filtered.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+      }
       filters.querySelectorAll('[data-festival-filter]').forEach(item => item.setAttribute('aria-pressed',String(item === button)));
       renderProgram();
       const next = filtered.some(item => item.id === selected) ? selected : filtered[0].id;
