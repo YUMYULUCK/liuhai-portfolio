@@ -55,5 +55,13 @@
       ]
     }
   ],
-  "buildCommand": "node .deploy/prepare-build.cjs"
+  "buildCommand": "node .deploy/prepare-release.cjs",
+  "outputDirectory": "release-output",
+  "redirects": [
+    {
+      "source": "/assets/*.png",
+      "destination": "https://portfolio.yumyuluck.uno/liuhai-portfolio-main/assets/:splat.png",
+      "statusCode": 302
+    }
+  ]
 }
