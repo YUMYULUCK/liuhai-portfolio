@@ -44,7 +44,24 @@
           "value": "application/vnd.apple.mpegurl"
         }
       ]
+    },
+    {
+      "source": "/*.auto-v3.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
-  "buildCommand": "node .deploy/prepare-build.cjs"
+  "buildCommand": "node .deploy/prepare-release.cjs",
+  "outputDirectory": "release-output",
+  "redirects": [
+    {
+      "source": "/assets/*.png",
+      "destination": "https://portfolio.yumyuluck.uno/liuhai-portfolio-main/assets/:splat.png",
+      "statusCode": 302
+    }
+  ]
 }
